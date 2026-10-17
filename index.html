@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Математика чемпиондары</title>
+<style>
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:#0b1b3a;overflow:hidden;font-family:"Trebuchet MS","Segoe UI",Arial,sans-serif;display:flex;align-items:center;justify-content:center}
+#stage{position:relative;overflow:hidden;background:#0b1b3a;user-select:none}
+.scr{position:absolute;inset:0;background-size:100% 100%;background-repeat:no-repeat;display:none}
+.scr.on{display:block}
+#s1{background-image:url(assets/start-screen.png)}
+#s2{background-image:url(assets/game-screen.png)}
+.p{position:absolute;display:flex;align-items:center;justify-content:center;text-align:center}
+button{font-family:inherit;cursor:pointer;border:0;transition:transform .12s,filter .15s}
+button:active:not(:disabled){transform:scale(.96)}
+button:focus-visible,input:focus-visible{outline:.3em solid #fff;outline-offset:.1em}
+/* start */
+#go{left:35%;top:60%;width:29.9%;height:13.3%;background:transparent;border-radius:3em}
+#go:hover{background:rgba(255,255,255,.14)}
+.nm{font-size:2.1em;font-weight:900;color:#fff;border:.2em solid #fff8;border-radius:.6em;text-align:center;width:14.5%;height:8.5%;top:65%;text-shadow:0 .1em .2em #0006}
+#n1{left:12.3%;background:#c91d28}
+#n2{left:72.9%;background:#1e5be0}
+#snd{left:70.6%;top:77.6%;width:11.1%;height:15.9%;background:transparent;border-radius:1.2em}
+#snd:hover{background:rgba(255,255,255,.12)}
+#snd.off::after{content:"✕";position:absolute;font-size:5em;color:#ff4b4b;font-weight:900;text-shadow:0 0 .2em #000}
+#info{left:24%;top:94.3%;width:52%;height:4.6%;gap:1.6em;font-size:1.9em;font-weight:800;color:#fff;background:#12306fcc;border:.12em solid #ffd34d;border-radius:2em}
+/* game */
+.nb{top:13.8%;height:7.8%;flex-direction:column;color:#5a1b12;font-weight:900;line-height:1.1}
+#b1{left:20.3%;width:12%}#b2{left:68.1%;width:11.8%}
+.nb b{font-size:1.5em;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nb i{font-style:normal;font-size:1.7em;color:#c45c00}
+.nb.act{animation:glow 1s infinite alternate}
+@keyframes glow{from{box-shadow:0 0 0 #ffe066}to{box-shadow:0 0 2em .4em #ffe066}}
+.nb{border-radius:1em}
+#qp{left:24.5%;top:35.4%;width:10.5%;height:5.8%;color:#fff;font-weight:900;font-size:1.6em;white-space:nowrap}
+#turn{left:35.5%;top:35.6%;width:26.5%;overflow:hidden;white-space:nowrap;height:5.8%;font-weight:900;font-size:1.9em;color:#fff;border-radius:2em;transition:background .3s}
+#tm{left:66.4%;top:35.6%;width:9%;height:6%;color:#fff;font-weight:900;font-size:2.6em}
+#tm.low{color:#ffe066;animation:pulse .5s infinite alternate}
+@keyframes pulse{to{transform:scale(1.15)}}
+#q{left:24.5%;top:43.4%;width:51%;height:15.1%;font-weight:900;color:#2a2f4a;overflow:hidden;padding:.6em 1.5em;line-height:1.2}
+.a{position:absolute;height:9.6%;width:25%;background:transparent;text-align:left;font-weight:800;color:#1f2540;font-size:1em;padding:0 1em 0 5.4em;border-radius:1.2em;overflow:hidden;display:flex;align-items:center;line-height:1.2}
+.a span{display:block;width:100%;white-space:nowrap;overflow:hidden;font-size:2.4em;padding:.1em 0}
+.a::before{content:attr(data-l);position:absolute;top:50%;transform:translateY(-50%);left:.52em;width:1.6em;text-align:center;color:#fff;font-weight:900;font-size:2.2em;line-height:1;text-shadow:0 .05em .1em #0008}
+.a.l{left:24.5%}.a.r::before{left:.62em}.a.l{left:24.5%}.a.r{left:50.6%;width:25.1%}.a.t{top:60.8%}.a.b{top:72.3%}
+.a:hover:not(:disabled){filter:brightness(1.08);transform:scale(1.015)}
+.a:disabled{cursor:default}
+.a.ok{background:#22c55e;color:#fff;box-shadow:0 0 1.5em .5em #86ffb0;animation:pop .5s}
+.a.no{background:#ef4444;color:#fff;animation:shake .4s}
+@keyframes pop{50%{transform:scale(1.04)}}
+@keyframes shake{25%{transform:translateX(-.6em)}75%{transform:translateX(.6em)}}
+#fb{left:24%;top:84.6%;width:52%;height:6.2%;font-weight:800;font-size:1.9em;color:#fff;background:#12306fe0;border-radius:1em;padding:0 1em;opacity:0;transition:opacity .2s;line-height:1.1}
+#fb.show{opacity:1}
+.bt{top:92%;height:6%;width:20%;font-size:2em;font-weight:900;border-radius:1em;color:#fff;box-shadow:0 .25em 0 #0004}
+#nx{left:27%;background:#16a34a}#nx:disabled{background:#8a9a8f;opacity:.7;cursor:default}
+#en{left:53%;background:#d9381e}
+/* result */
+#s3{background:radial-gradient(circle at 50% 40%,#2a56c6,#0b1b3a 75%);overflow:hidden}
+#card{inset:8% 22%;flex-direction:column;gap:1.2em;color:#fff;font-weight:900}
+#trophy{font-size:9em;filter:drop-shadow(0 0 .3em gold);animation:bob 1.2s infinite alternate}
+@keyframes bob{to{transform:translateY(-.15em) rotate(4deg)}}
+#wt{font-size:3.4em;color:#ffd34d;text-shadow:0 .08em .15em #000a;max-width:100%;word-break:break-word}
+#wn{font-size:6.2em;line-height:1}
+#sc{display:flex;gap:3em;font-size:2.6em}
+#sc div{padding:.4em 1em;border-radius:.8em}
+.rb{position:static;font-size:2.1em;padding:.5em 1.4em;border-radius:1em;color:#fff;font-weight:900}
+.cf{position:absolute;top:-5%;width:1em;height:1.6em;animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(115em) rotate(720deg)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div id="stage">
+ <!-- START -->
+ <section class="scr on" id="s1">
+  <input class="p nm" id="n1" maxlength="14" value="Қызыл ойыншы" aria-label="Қызыл ойыншының аты">
+  <input class="p nm" id="n2" maxlength="14" value="Көк ойыншы" aria-label="Көк ойыншының аты">
+  <button class="p" id="go" aria-label="Ойынды бастау"></button>
+  <button class="p" id="snd" aria-label="Дыбысты қосу/өшіру"></button>
+  <div class="p" id="info">12 сұрақ &nbsp;•&nbsp; 15 секунд &nbsp;•&nbsp; Дұрыс жауапқа +10 ұпай</div>
+ </section>
+ <!-- GAME -->
+ <section class="scr" id="s2">
+  <div class="p nb" id="b1"><b></b><i></i></div>
+  <div class="p nb" id="b2"><b></b><i></i></div>
+  <div class="p" id="qp"></div>
+  <div class="p" id="turn"></div>
+  <div class="p" id="tm"></div>
+  <div class="p" id="q"></div>
+  <button class="a l t" data-l="A"><span></span></button>
+  <button class="a r t" data-l="B"><span></span></button>
+  <button class="a l b" data-l="C"><span></span></button>
+  <button class="a r b" data-l="D"><span></span></button>
+  <div class="p" id="fb"></div>
+  <button class="p bt" id="nx" disabled>Келесі сұрақ</button>
+  <button class="p bt" id="en">Ойынды аяқтау</button>
+ </section>
+ <!-- RESULT -->
+ <section class="scr" id="s3">
+  <div class="p" id="card">
+   <div id="trophy">🏆</div>
+   <div id="wt"></div>
+   <div id="wn"></div>
+   <div id="sc"><div id="r1" style="background:#c91d28"></div><div id="r2" style="background:#1e5be0"></div></div>
+   <div style="display:flex;gap:1.5em;margin-top:.8em">
+    <button class="rb" id="again" style="background:#16a34a">ҚАЙТА ОЙНАУ</button>
+    <button class="rb" id="home" style="background:#f59e0b">БАСТЫ БЕТКЕ ОРАЛУ</button>
+   </div>
+  </div>
+ </section>
+</div>
+<script>
+"use strict";
+const Q=[
+["3 сызғыштың құны 600 теңге. Бір сызғыштың бағасы қанша?",["200 теңге","300 теңге","180 теңге","600 теңге"],0,"600 : 3 = 200 теңге."],
+["Бір дәптер 50 теңге. 8 дәптер қанша тұрады?",["58 теңге","400 теңге","350 теңге","450 теңге"],1,"50 × 8 = 400 теңге."],
+["9 бірдей қап күріштің массасы 54 кг. Бір қаптың массасы қанша?",["9 кг","6 кг","45 кг","8 кг"],1,"54 : 9 = 6 кг."],
+["Бір заттың массасы 8 кг. Жалпы массасы 64 кг болса, неше зат бар?",["6 зат","8 зат","9 зат","72 зат"],1,"64 : 8 = 8 зат."],
+["Бір оқушы 3 пакет қоқыс жинады. 8 оқушы неше пакет жинайды?",["11 пакет","21 пакет","24 пакет","32 пакет"],2,"8 × 3 = 24 пакет."],
+["Бір оқушы 3 пакет қоқыс жинайды. 6 оқушы неше пакет жинайды?",["18 пакет","9 пакет","21 пакет","36 пакет"],0,"6 × 3 = 18 пакет."],
+["800 : (35 − 27) + 113 · 1 өрнегінің мәні қандай?",["100","213","113","800"],1,"35 − 27 = 8; 800 : 8 = 100; 113 · 1 = 113; 100 + 113 = 213."],
+["117 + 7 · 9 − 20 · 9 өрнегінің мәні қандай?",["180","63","0","117"],2,"7 · 9 = 63; 20 · 9 = 180; 117 + 63 − 180 = 0."],
+["y · 9 = 810. y нешеге тең?",["90","9","810","80"],0,"y = 810 : 9 = 90."],
+["x : 6 = 90. x нешеге тең?",["15","540","96","5400"],1,"x = 90 · 6 = 540."],
+["630 : k = 7. k нешеге тең?",["7","70","90","4410"],2,"k = 630 : 7 = 90."],
+["Бір ойыншық ожау 90 теңге тұрады. Осындай 4 ожау қанша тұрады?",["94 теңге","360 теңге","180 теңге","450 теңге"],1,"90 × 4 = 360 теңге."]
+];
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const S=$("#stage"),TIME=15,PTS=10,DEF=["Қызыл ойыншы","Көк ойыншы"];
+let idx=0,score=[0,0],names=[...DEF],left=TIME,timer=null,locked=true,sound=true,actx=null;
+const btns=$$(".a");
+
+function resize(){const w=innerWidth,h=innerHeight,sw=Math.min(w,h*16/9);
+ S.style.width=sw+"px";S.style.height=sw*9/16+"px";S.style.fontSize=sw/100+"px";fitAll()}
+function fit(el,max,min){let s=max;el.style.fontSize=s+"em";
+ while((el.scrollHeight>el.clientHeight+1||el.scrollWidth>el.clientWidth+1)&&s>min){s-=.1;el.style.fontSize=s+"em"}}
+function fitAll(){if(!$("#s2").classList.contains("on"))return;
+ fit($("#q"),2.7,1.1);btns.forEach(b=>fit(b.firstChild,2.4,1))}
+addEventListener("resize",resize);
+
+function show(id){$$(".scr").forEach(s=>s.classList.toggle("on",s.id===id));fitAll()}
+function tone(f,d,t="sine",at=0,v=.15){if(!sound||!actx)return;
+ const o=actx.createOscillator(),g=actx.createGain(),n=actx.currentTime+at;
+ o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);
+ o.connect(g);g.connect(actx.destination);o.start(n);o.stop(n+d)}
+function initAudio(){try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();actx.resume()}catch(e){}}
+const sfx={ok:()=>{tone(523,.15,"triangle");tone(659,.15,"triangle",.12);tone(784,.3,"triangle",.24)},
+ no:()=>{tone(220,.18,"sawtooth",0,.1);tone(165,.3,"sawtooth",.16,.1)},
+ win:()=>[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.25,"triangle",i*.18))};
+
+$("#snd").onclick=()=>{initAudio();sound=!sound;$("#snd").classList.toggle("off",!sound);if(sound)tone(660,.12)};
+$("#go").onclick=()=>{initAudio();
+ names=[$("#n1").value.trim()||DEF[0],$("#n2").value.trim()||DEF[1]];
+ start()};
+function start(){idx=0;score=[0,0];show("s2");load()}
+
+function hud(){const cur=idx%2;
+ [0,1].forEach(i=>{const b=$("#b"+(i+1));b.firstChild.textContent=names[i];b.lastChild.textContent="Ұпай: "+score[i];b.classList.toggle("act",i===cur&&!locked)});
+ fit($("#b1").firstChild,1.5,.7);fit($("#b2").firstChild,1.5,.7)}
+function load(){clearInterval(timer);const d=Q[idx],cur=idx%2;
+ locked=false;left=TIME;
+ $("#q").textContent=d[0];
+ btns.forEach((b,i)=>{b.disabled=false;b.className=b.className.replace(/ ?(ok|no)/g,"");b.firstChild.textContent=d[1][i]});
+ $("#qp").textContent="Сұрақ "+(idx+1)+"/"+Q.length;
+ $("#qp").style.cssText="";
+ const t=$("#turn");t.textContent="Жауап береді: "+names[cur];t.style.background=cur?"#1e5be0":"#c91d28";
+ fit(t,1.7,.8);
+ $("#fb").className="p";$("#fb").classList.remove("show");
+ $("#nx").disabled=true;$("#nx").textContent=idx===Q.length-1?"Нәтиже":"Келесі сұрақ";
+ tick();hud();fitAll();
+ timer=setInterval(()=>{left--;tick();if(left<=0)answer(-1)},1000)}
+function tick(){const t=$("#tm");t.textContent=Math.max(left,0);t.classList.toggle("low",left<=5)}
+function answer(i){if(locked)return;locked=true;clearInterval(timer);
+ const d=Q[idx],cur=idx%2,fb=$("#fb");
+ btns.forEach(b=>b.disabled=true);
+ btns[d[2]].classList.add("ok");
+ if(i===d[2]){score[cur]+=PTS;sfx.ok();fb.textContent="✅ Дұрыс! +10 ұпай. "+d[3]}
+ else{if(i>=0)btns[i].classList.add("no");sfx.no();
+  fb.textContent=(i<0?"⏰ Уақыт бітті! ":"❌ Қате! ")+d[3]}
+ fb.classList.add("show");fit(fb,1.9,.9);
+ $("#nx").disabled=false;hud()}
+btns.forEach((b,i)=>b.onclick=()=>answer(i));
+$("#nx").onclick=()=>{if(!locked||$("#nx").disabled)return;idx++;idx>=Q.length?finish():load()};
+$("#en").onclick=()=>{if(confirm("Ойынды аяқтап, нәтижені көрсету керек пе?")){clearInterval(timer);finish()}};
+
+function finish(){clearInterval(timer);locked=true;show("s3");
+ const [a,b]=score;
+ $("#wt").textContent=a===b?"Тең ойын!":"Жеңімпаз:";
+ $("#wn").textContent=a===b?"🤝":names[a>b?0:1];
+ $("#r1").textContent=names[0]+": "+a;$("#r2").textContent=names[1]+": "+b;
+ fit($("#wn"),6.2,2);
+ $$(".cf").forEach(c=>c.remove());
+ const cols=["#ff4b4b","#ffd34d","#3b82f6","#22c55e","#f472b6","#fff"],s3=$("#s3");
+ for(let i=0;i<70;i++){const c=document.createElement("i");c.className="cf";
+  c.style.cssText=`left:${Math.random()*100}%;background:${cols[i%6]};animation-duration:${3+Math.random()*3}s;animation-delay:${-Math.random()*5}s`;
+  s3.appendChild(c)}
+ sfx.win()}
+$("#again").onclick=()=>{initAudio();start()};
+$("#home").onclick=()=>{clearInterval(timer);show("s1")};
+resize();
+</script>
+</body>
+</html>
